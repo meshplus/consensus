@@ -97,3 +97,36 @@ type Logger interface {
 	Warnf(template string, args ...interface{})
 	Panicf(template string, args ...interface{})
 }
+
+// A Counter represents a monotonically increasing value.
+type Counter interface {
+	// With is used to provide label values when updating a Counter. This must be
+	// used to provide values for all LabelNames provided to CounterOpts.
+	With(labelValues ...string) Counter
+
+	// Add increments a counter value.
+	Add(delta float64)
+}
+
+// A Gauge is a meter that expresses the current value of some metric.
+type Gauge interface {
+	// With is used to provide label values when recording a Gauge value. This
+	// must be used to provide values for all LabelNames provided to GaugeOpts.
+	With(labelValues ...string) Gauge
+
+	// Add increments a Gauge value.
+	Add(delta float64)
+
+	// Set is used to update the current value associated with a Gauge.
+	Set(value float64)
+}
+
+// A Histogram is a meter that records an observed value into quantized
+// buckets.
+type Histogram interface {
+	// With is used to provide label values when recording a Histogram
+	// observation. This must be used to provide values for all LabelNames
+	// provided to HistogramOpts.
+	With(labelValues ...string) Histogram
+	Observe(value float64)
+}
