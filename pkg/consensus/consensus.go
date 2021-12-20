@@ -335,6 +335,8 @@ func (c *Consensus) ValidateConfiguration(nodes []uint64) error {
 
 	if c.Logger == nil {
 		c.Logger = c.Diagnostics.Logger
+	} else {
+		c.Diagnostics.Logger = c.Logger
 	}
 
 	return nil
