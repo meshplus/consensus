@@ -37,6 +37,7 @@ type Consensus struct {
 	RequestInspector   bft.RequestInspector
 	Synchronizer       bft.Synchronizer
 	Logger             bft.Logger
+	Diagnostics        bft.Diagnostics
 	Metadata           protos.ViewMetadata
 	LastProposal       types.Proposal
 	LastSignatures     []types.Signature
@@ -328,6 +329,12 @@ func (c *Consensus) ValidateConfiguration(nodes []uint64) error {
 
 	if len(nodeSet) != len(nodes) {
 		return errors.Errorf("nodes contains duplicate IDs, nodes: %v", nodes)
+	}
+
+	c.Diagnostics = c.Diagnostics.WrapNils()
+
+	if c.Logger == nil {
+		c.Logger = c.Diagnostics.Logger
 	}
 
 	return nil
