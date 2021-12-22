@@ -52,6 +52,8 @@ type Diagnostics struct {
 
 // WrapNils returns Diagnostics with mocked empty implemetations
 func (d Diagnostics) WrapNils() (out Diagnostics) {
+	out = d
+
 	if d.Logger == nil {
 		out.Logger = EmptyLogger{}
 	}

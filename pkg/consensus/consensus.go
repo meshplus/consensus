@@ -37,7 +37,7 @@ type Consensus struct {
 	RequestInspector   bft.RequestInspector
 	Synchronizer       bft.Synchronizer
 	Logger             bft.Logger
-	Diagnostics        bft.Diagnostics
+	Diag               bft.Diagnostics
 	Metadata           protos.ViewMetadata
 	LastProposal       types.Proposal
 	LastSignatures     []types.Signature
@@ -123,6 +123,7 @@ func (c *Consensus) Start() error {
 		InFlightProposal: c.inFlight,
 		Entries:          c.WALInitialContent,
 		Logger:           c.Logger,
+		Diag:             c.Diag,
 		WAL:              c.WAL,
 	}
 
@@ -139,7 +140,7 @@ func (c *Consensus) Start() error {
 		SubmitTimeout:     c.Config.RequestPoolSubmitTimeout,
 	}
 	c.submittedChan = make(chan struct{}, 1)
-	c.Pool = algorithm.NewPool(c.Logger, c.RequestInspector, c.controller, opts, c.submittedChan)
+	c.Pool = algorithm.NewPool(c.RequestInspector, c.controller, opts, c.Diag, c.submittedChan)
 	c.continueCreateComponents()
 
 	c.Logger.Debugf("Application started with view %d, seq %d, and decisions %d", c.Metadata.ViewId, c.Metadata.LatestSequence, c.Metadata.DecisionsInView)
@@ -331,12 +332,12 @@ func (c *Consensus) ValidateConfiguration(nodes []uint64) error {
 		return errors.Errorf("nodes contains duplicate IDs, nodes: %v", nodes)
 	}
 
-	c.Diagnostics = c.Diagnostics.WrapNils()
+	c.Diag = c.Diag.WrapNils()
 
 	if c.Logger == nil {
-		c.Logger = c.Diagnostics.Logger
+		c.Logger = c.Diag.Logger
 	} else {
-		c.Diagnostics.Logger = c.Logger
+		c.Diag.Logger = c.Logger
 	}
 
 	return nil

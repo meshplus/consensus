@@ -32,6 +32,7 @@ type PersistedState struct {
 	InFlightProposal *InFlightData
 	Entries          [][]byte
 	Logger           api.Logger
+	Diag             api.Diagnostics
 	WAL              api.WriteAheadLog
 }
 
