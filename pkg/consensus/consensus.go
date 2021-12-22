@@ -76,7 +76,7 @@ func (c *Consensus) Complain(viewNum uint64, stopView bool) {
 func (c *Consensus) Deliver(proposal types.Proposal, signatures []types.Signature) types.Reconfig {
 	reconfig := c.Application.Deliver(proposal, signatures)
 	if reconfig.InLatestDecision {
-		c.Logger.Debugf("Detected a reconfig in deliver")
+		c.Diag.L().Debugf("Detected a reconfig in deliver")
 		c.reconfigChan <- reconfig
 	}
 	return reconfig
@@ -85,7 +85,7 @@ func (c *Consensus) Deliver(proposal types.Proposal, signatures []types.Signatur
 func (c *Consensus) Sync() types.SyncResponse {
 	syncResponse := c.Synchronizer.Sync()
 	if syncResponse.Reconfig.InReplicatedDecisions {
-		c.Logger.Debugf("Detected a reconfig in sync")
+		c.Diag.L().Debugf("Detected a reconfig in sync")
 		c.reconfigChan <- types.Reconfig{
 			InLatestDecision: true,
 			CurrentNodes:     syncResponse.Reconfig.CurrentNodes,
@@ -143,7 +143,7 @@ func (c *Consensus) Start() error {
 	c.Pool = algorithm.NewPool(c.RequestInspector, c.controller, opts, c.Diag, c.submittedChan)
 	c.continueCreateComponents()
 
-	c.Logger.Debugf("Application started with view %d, seq %d, and decisions %d", c.Metadata.ViewId, c.Metadata.LatestSequence, c.Metadata.DecisionsInView)
+	c.Diag.L().Debugf("Application started with view %d, seq %d, and decisions %d", c.Metadata.ViewId, c.Metadata.LatestSequence, c.Metadata.DecisionsInView)
 	view, seq, dec := c.setViewAndSeq(c.Metadata.ViewId, c.Metadata.LatestSequence, c.Metadata.DecisionsInView)
 
 	c.waitForEachOther()
@@ -159,7 +159,7 @@ func (c *Consensus) Start() error {
 
 func (c *Consensus) run() {
 	defer func() {
-		c.Logger.Infof("Exiting")
+		c.Diag.L().Infof("Exiting")
 		atomic.StoreUint64(&c.running, 0)
 		c.Stop()
 	}()
@@ -177,7 +177,7 @@ func (c *Consensus) run() {
 }
 
 func (c *Consensus) reconfig(reconfig types.Reconfig) {
-	c.Logger.Debugf("Starting reconfig")
+	c.Diag.L().Debugf("Starting reconfig")
 	c.consensusLock.Lock()
 	defer c.consensusLock.Unlock()
 
@@ -195,7 +195,7 @@ func (c *Consensus) reconfig(reconfig types.Reconfig) {
 	}
 
 	if !exist {
-		c.Logger.Infof("Evicted in reconfiguration, shutting down")
+		c.Diag.L().Infof("Evicted in reconfiguration, shutting down")
 		c.close()
 		return
 	}
@@ -204,10 +204,10 @@ func (c *Consensus) reconfig(reconfig types.Reconfig) {
 	if err := c.ValidateConfiguration(reconfig.CurrentNodes); err != nil {
 		if strings.Contains(err.Error(), "nodes does not contain the SelfID") {
 			c.close()
-			c.Logger.Infof("Closing consensus since this node is not in the current set of nodes")
+			c.Diag.L().Infof("Closing consensus since this node is not in the current set of nodes")
 			return
 		} else {
-			c.Logger.Panicf("Configuration is invalid, error: %v", err)
+			c.Diag.L().Panicf("Configuration is invalid, error: %v", err)
 		}
 	}
 
@@ -227,9 +227,9 @@ func (c *Consensus) reconfig(reconfig types.Reconfig) {
 	proposal, _ := c.checkpoint.Get()
 	md := &protos.ViewMetadata{}
 	if err := proto.Unmarshal(proposal.Metadata, md); err != nil {
-		c.Logger.Panicf("Couldn't unmarshal the checkpoint metadata, error: %v", err)
+		c.Diag.L().Panicf("Couldn't unmarshal the checkpoint metadata, error: %v", err)
 	}
-	c.Logger.Debugf("Checkpoint with view %d and seq %d", md.ViewId, md.LatestSequence)
+	c.Diag.L().Debugf("Checkpoint with view %d and seq %d", md.ViewId, md.LatestSequence)
 
 	view, seq, dec := c.setViewAndSeq(md.ViewId, md.LatestSequence, md.DecisionsInView)
 
@@ -239,7 +239,7 @@ func (c *Consensus) reconfig(reconfig types.Reconfig) {
 
 	c.Pool.RestartTimers()
 
-	c.Logger.Debugf("Reconfig is done")
+	c.Diag.L().Debugf("Reconfig is done")
 }
 
 func (c *Consensus) close() {
@@ -267,7 +267,7 @@ func (c *Consensus) Stop() {
 
 func (c *Consensus) HandleMessage(sender uint64, m *protos.Message) {
 	if _, exists := c.nodeMap.Load(sender); !exists {
-		c.Logger.Warnf("Received message from unexpected node %d", sender)
+		c.Diag.L().Warnf("Received message from unexpected node %d", sender)
 		return
 	}
 	c.consensusLock.RLock()
@@ -287,7 +287,7 @@ func (c *Consensus) SubmitRequest(req []byte) error {
 	if c.GetLeaderID() == 0 {
 		return errors.Errorf("no leader")
 	}
-	c.Logger.Debugf("Submit Request: %s", c.RequestInspector.RequestID(req))
+	c.Diag.L().Debugf("Submit Request: %s", c.RequestInspector.RequestID(req))
 	return c.controller.SubmitRequest(req)
 }
 
@@ -332,12 +332,10 @@ func (c *Consensus) ValidateConfiguration(nodes []uint64) error {
 		return errors.Errorf("nodes contains duplicate IDs, nodes: %v", nodes)
 	}
 
-	c.Diag = c.Diag.WrapNils()
-
 	if c.Logger == nil {
-		c.Logger = c.Diag.Logger
+		c.Logger = c.Diag.Logger()
 	} else {
-		c.Diag.Logger = c.Logger
+		c.Diag = c.Diag.SetLogger(c.Logger)
 	}
 
 	return nil
@@ -449,14 +447,14 @@ func (c *Consensus) setViewAndSeq(view, seq, dec uint64) (newView, newSeq, newDe
 	}
 	viewChange, err := c.state.LoadViewChangeIfApplicable()
 	if err != nil {
-		c.Logger.Panicf("Failed loading view change, error: %v", err)
+		c.Diag.L().Panicf("Failed loading view change, error: %v", err)
 	}
 	if viewChange == nil {
-		c.Logger.Debugf("No view change to restore")
+		c.Diag.L().Debugf("No view change to restore")
 	} else {
 		// Check if the view change has a newer view
 		if viewChange.NextView >= view {
-			c.Logger.Debugf("Restoring from view change with view %d", viewChange.NextView)
+			c.Diag.L().Debugf("Restoring from view change with view %d", viewChange.NextView)
 			newView = viewChange.NextView
 			restoreChan := make(chan struct{}, 1)
 			restoreChan <- struct{}{}
@@ -466,14 +464,14 @@ func (c *Consensus) setViewAndSeq(view, seq, dec uint64) (newView, newSeq, newDe
 
 	viewSeq, err := c.state.LoadNewViewIfApplicable()
 	if err != nil {
-		c.Logger.Panicf("Failed loading new view, error: %v", err)
+		c.Diag.L().Panicf("Failed loading new view, error: %v", err)
 	}
 	if viewSeq == nil {
-		c.Logger.Debugf("No new view to restore")
+		c.Diag.L().Debugf("No new view to restore")
 	} else {
 		// Check if metadata should be taken from the restored new view
 		if viewSeq.Seq >= seq {
-			c.Logger.Debugf("Restoring from new view with view %d and seq %d", viewSeq.View, viewSeq.Seq)
+			c.Diag.L().Debugf("Restoring from new view with view %d and seq %d", viewSeq.View, viewSeq.Seq)
 			newView = viewSeq.View
 			newSeq = viewSeq.Seq
 			newDec = 0

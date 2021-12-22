@@ -44,33 +44,120 @@ type Histogram interface {
 
 // Diagnostics contains set of various metrics and logging interfaces
 type Diagnostics struct {
-	Logger    Logger
-	Counter   Counter
-	Gauge     Gauge
-	Histogram Histogram
+	l Logger
+	c Counter
+	g Gauge
+	h Histogram
 }
 
-// WrapNils returns Diagnostics with mocked empty implemetations
-func (d Diagnostics) WrapNils() (out Diagnostics) {
-	out = d
+// Set returns initialized Diagnostics
+func (d Diagnostics) Set(
+	l Logger,
+	c Counter,
+	g Gauge,
+	h Histogram,
+) Diagnostics {
+	return Diagnostics{l: l, c: c, g: g, h: h}
+}
 
-	if d.Logger == nil {
-		out.Logger = EmptyLogger{}
+// SetLogger returns new Diagnostics with updated Logger
+func (d Diagnostics) SetLogger(l Logger) Diagnostics {
+	d.l = l
+	return d
+}
+
+// SetCounter returns new Diagnostics with updated Counter
+func (d Diagnostics) SetCounter(c Counter) Diagnostics {
+	d.c = c
+	return d
+}
+
+// SetGauge returns new Diagnostics with updated Gauge
+func (d Diagnostics) SetGauge(g Gauge) Diagnostics {
+	d.g = g
+	return d
+}
+
+// SetHistogram returns new Diagnostics with updated Histogram
+func (d Diagnostics) SetHistogram(h Histogram) Diagnostics {
+	d.h = h
+	return d
+}
+
+// SetL returns new Diagnostics with updated Logger
+func (d Diagnostics) SetL(l Logger) Diagnostics {
+	return d.SetLogger(l)
+}
+
+// SetC returns new Diagnostics with updated Counter
+func (d Diagnostics) SetC(c Counter) Diagnostics {
+	return d.SetCounter(c)
+}
+
+// SetG returns new Diagnostics with updated Gauge
+func (d Diagnostics) SetG(g Gauge) Diagnostics {
+	return d.SetGauge(g)
+}
+
+// SetH returns new Diagnostics with updated Histogram
+func (d Diagnostics) SetH(h Histogram) Diagnostics {
+	return d.SetHistogram(h)
+}
+
+// Logger returns initialized Logger
+func (d Diagnostics) Logger() Logger {
+	if d.l != nil {
+		return d.l
 	}
 
-	if d.Counter == nil {
-		out.Counter = EmptyCounter{}
+	return EmptyLogger{}
+}
+
+// Counter returns initialized Counter
+func (d Diagnostics) Counter() Counter {
+	if d.c != nil {
+		return d.c
 	}
 
-	if d.Gauge == nil {
-		out.Gauge = EmptyGauge{}
+	return EmptyCounter{}
+}
+
+// Gauge returns initialized Gauge
+func (d Diagnostics) Gauge() Gauge {
+	if d.g != nil {
+		return d.g
 	}
 
-	if d.Histogram == nil {
-		out.Histogram = EmptyHistogram{}
+	return EmptyGauge{}
+}
+
+// Histogram returns initialized Histogram
+func (d Diagnostics) Histogram() Histogram {
+	if d.h != nil {
+		return d.h
 	}
 
-	return
+	return EmptyHistogram{}
+}
+
+// L returns initialized Logger
+func (d Diagnostics) L() Logger {
+	return d.Logger()
+}
+
+// C returns initialized Counter
+func (d Diagnostics) C() Counter {
+	return d.Counter()
+}
+
+// G returns initialized Gauge
+func (d Diagnostics) G() Gauge {
+	return d.Gauge()
+}
+
+// H returns initialized Histogram
+func (d Diagnostics) H() Histogram {
+	return d.Histogram()
 }
 
 // --------------------------------------
