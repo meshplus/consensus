@@ -3,7 +3,7 @@ package test
 import (
 	"time"
 
-	"github.com/SmartBFT-Go/consensus/pkg/types"
+	"github.com/meshplus/consensus/pkg/types"
 )
 
 type Configuration struct {

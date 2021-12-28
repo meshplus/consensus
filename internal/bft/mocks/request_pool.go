@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	types "github.com/SmartBFT-Go/consensus/pkg/types"
+	types "github.com/meshplus/consensus/pkg/types"
 	mock "github.com/stretchr/testify/mock"
 )
 

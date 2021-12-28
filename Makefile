@@ -4,5 +4,7 @@
 all:
 	bash ./scripts/build_checks.sh
 protos: 
-	protoc --go_opt=paths=source_relative --go_out=. smartbftprotos/*.proto
-	find . -name "*.pb.go" | grep -v "^./vendor" | xargs goimports -w
+	cd smartbftprotos && protoc -I=. \
+	-I${GOPATH}/src \
+	--gogofaster_out=:. \
+	messages.proto logrecord.proto

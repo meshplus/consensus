@@ -13,8 +13,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/SmartBFT-Go/consensus/pkg/api"
-	protos "github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/pkg/api"
+	protos "github.com/meshplus/consensus/smartbftprotos"
 	"github.com/golang/protobuf/proto"
 )
 

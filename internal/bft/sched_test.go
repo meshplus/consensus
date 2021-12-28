@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SmartBFT-Go/consensus/internal/bft"
+	"github.com/meshplus/consensus/internal/bft"
 	"github.com/stretchr/testify/assert"
 )
 

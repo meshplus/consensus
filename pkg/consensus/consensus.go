@@ -14,10 +14,10 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
-	algorithm "github.com/SmartBFT-Go/consensus/internal/bft"
-	bft "github.com/SmartBFT-Go/consensus/pkg/api"
-	"github.com/SmartBFT-Go/consensus/pkg/types"
-	protos "github.com/SmartBFT-Go/consensus/smartbftprotos"
+	algorithm "github.com/meshplus/consensus/internal/bft"
+	bft "github.com/meshplus/consensus/pkg/api"
+	"github.com/meshplus/consensus/pkg/types"
+	protos "github.com/meshplus/consensus/smartbftprotos"
 	"github.com/pkg/errors"
 )
 

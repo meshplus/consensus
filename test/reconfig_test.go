@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/SmartBFT-Go/consensus/pkg/types"
+	"github.com/meshplus/consensus/pkg/types"
 
 	"github.com/stretchr/testify/assert"
 )

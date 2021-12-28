@@ -6,8 +6,8 @@
 package api
 
 import (
-	bft "github.com/SmartBFT-Go/consensus/pkg/types"
-	protos "github.com/SmartBFT-Go/consensus/smartbftprotos"
+	bft "github.com/meshplus/consensus/pkg/types"
+	protos "github.com/meshplus/consensus/smartbftprotos"
 )
 
 // Application delivers the consented proposal and corresponding signatures.

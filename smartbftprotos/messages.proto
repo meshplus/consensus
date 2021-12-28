@@ -6,7 +6,6 @@
 syntax = "proto3";
 
 
-option go_package = "github.com/SmartBFT-Go/consensus/smartbftprotos";
 
 
 package smartbftprotos;

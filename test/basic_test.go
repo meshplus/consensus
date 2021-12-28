@@ -18,8 +18,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SmartBFT-Go/consensus/internal/bft"
-	"github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/internal/bft"
+	"github.com/meshplus/consensus/smartbftprotos"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"

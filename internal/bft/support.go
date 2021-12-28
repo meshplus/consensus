@@ -6,8 +6,8 @@
 package bft
 
 import (
-	"github.com/SmartBFT-Go/consensus/pkg/api"
-	"github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/pkg/api"
+	"github.com/meshplus/consensus/smartbftprotos"
 )
 
 // Generate mocks for a collection of interfaces that are defined in api/dependencies.go

@@ -9,9 +9,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/SmartBFT-Go/consensus/pkg/api"
-	"github.com/SmartBFT-Go/consensus/pkg/types"
-	protos "github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/pkg/api"
+	"github.com/meshplus/consensus/pkg/types"
+	protos "github.com/meshplus/consensus/smartbftprotos"
 	"github.com/golang/protobuf/proto"
 )
 

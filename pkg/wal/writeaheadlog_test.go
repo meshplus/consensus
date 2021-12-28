@@ -14,8 +14,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/SmartBFT-Go/consensus/pkg/api"
-	"github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/pkg/api"
+	"github.com/meshplus/consensus/smartbftprotos"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )

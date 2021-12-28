@@ -3,8 +3,8 @@
 
 export GOROOT=$(go env GOROOT)
 export GOPATH=$(go env GOPATH)
-mkdir -p $GOPATH/src/github.com/SmartBFT-Go/
+mkdir -p $GOPATH/src/github.com/meshplus/
 cd ..
 echo "[[[[" `pwd` "]]]]"
-mv consensus $GOPATH/src/github.com/SmartBFT-Go/
-cd $GOPATH/src/github.com/SmartBFT-Go/consensus
+mv consensus $GOPATH/src/github.com/meshplus/
+cd $GOPATH/src/github.com/meshplus/consensus

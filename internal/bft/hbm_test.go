@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/smartbftprotos"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )

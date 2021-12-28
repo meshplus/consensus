@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SmartBFT-Go/consensus/internal/bft"
-	"github.com/SmartBFT-Go/consensus/pkg/types"
-	protos "github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/internal/bft"
+	"github.com/meshplus/consensus/pkg/types"
+	protos "github.com/meshplus/consensus/smartbftprotos"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

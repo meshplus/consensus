@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/SmartBFT-Go/consensus/smartbftprotos"
+	"github.com/meshplus/consensus/smartbftprotos"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
